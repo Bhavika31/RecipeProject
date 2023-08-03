@@ -18,11 +18,7 @@
             <p>Category: {{ recipe['category'] }}</p>
             <p>Area: {{ recipe['area'] }}</p>
             <p>Instructions: {{ recipe['instructions'] }}</p>
-            {% if recipe['youtube_link'] %}
-                <p>Youtube Link: <a href="{{ recipe['youtube_link'] }}" target="_blank">Watch on YouTube</a></p>
-            {% else %}
-                <p>Youtube Link: Not available</p>
-            {% endif %}
+            <p>Youtube Link: {{ recipe['youtube_link'] }}</p>
             <p>Tags: {{ recipe['tags'] }}</p>
             <img src="{{ recipe['meal_thumb'] }}" alt="Meal Thumbnail">
 
@@ -39,6 +35,7 @@
                     <li>{{ ingredient }}: {{ measurement }}</li>
                 {% endfor %}
             </ul>
+
             <hr>
         {% endfor %}
     {% else %}
