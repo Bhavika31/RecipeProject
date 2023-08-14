@@ -1,0 +1,73 @@
+/* Store this code in 'style.css' file inside the 'static' folder */
+
+/* Navigation bar styles */
+.navigation {
+    background-color: #236B8E;
+    overflow: hidden;
+}
+
+.navigation a {
+    float: left;
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+.navigation a:hover {
+    background-color: #9AC0CD;
+    color: black;
+}
+
+/* Other styles */
+.header {
+    padding: 5px 120px;
+    width: 150px;
+    height: 70px;
+    background-color: #236B8E;
+}
+
+.border {
+    padding: 80px 50px;
+    width: 400px;
+    height: 450px;
+    border: 1px solid #236B8E;
+    border-radius: 0px;
+    background-color: #9AC0CD;
+}
+
+.btn {
+    padding: 10px 40px;
+    background-color: #236B8E;
+    color: #FFFFFF;
+    font-style: oblique;
+    font-weight: bold;
+    border-radius: 10px;
+}
+
+.textbox {
+    padding: 10px 40px;
+    background-color: #236B8E;
+    color: #FFFFFF; /* Changed 'text-color' to 'color' */
+    border-radius: 10px;
+}
+
+::placeholder {
+    color: #FFFFFF;
+    opacity: 1;
+    font-style: oblique;
+    font-weight: bold;
+}
+
+.word {
+    color: #FFFFFF;
+    font-style: oblique;
+    font-weight: bold;
+}
+
+.bottom {
+    color: #236B8E;
+    font-style: oblique;
+    font-weight: bold;
+}

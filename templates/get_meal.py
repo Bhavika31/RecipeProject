@@ -1,102 +1,8 @@
-from flask import Flask, render_template, request, redirect, session, url_for
 import sqlite3
-import re
-import bcrypt
-import datetime
 from collections import defaultdict
-from urllib.parse import urlparse
 
-app = Flask(__name__)
-
-app.secret_key = '1'
-
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    msg = ''
+def search_recipes_by_ingredients(input_ingredients, category=None, area=None):
     try:
-        if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
-            username = request.form['username']
-            password = request.form['password']
-
-            with sqlite3.connect('registration.db') as conn:
-                cursor = conn.cursor()
-                cursor.execute('SELECT * FROM users WHERE username = ?', (username,))
-                account = cursor.fetchone()
-
-            if not username or not password:
-                msg = 'Please fill in all details!'
-            elif account and bcrypt.checkpw(password.encode('utf-8'), account[2]):
-                session['loggedin'] = True
-                session['id'] = account[0]
-                session['username'] = account[1]
-                msg = 'Logged in successfully!'
-                return redirect(url_for('home'))
-            else:
-                msg = 'Incorrect username / password!'
-
-            conn.close()
-        return render_template('login.html', msg=msg)
-    except Exception as e:
-        msg = 'Error: {}'.format(str(e))
-        return render_template('login.html', msg=msg)
-
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    msg = ''
-    try:
-        if request.method == 'POST':
-            username = request.form['username']
-            raw_password = request.form['password']
-            email = request.form['email']
-
-            if not username or not raw_password or not email:
-                msg = 'Please fill in all details!'
-            else:
-                hashed_password = bcrypt.hashpw(raw_password.encode('utf-8'), bcrypt.gensalt())
-
-                with sqlite3.connect('registration.db') as conn:
-                    cursor = conn.cursor()
-                    cursor.execute('SELECT * FROM users WHERE username = ?', (username,))
-                    account = cursor.fetchone()
-
-                if account:
-                    msg = 'Account already exists!'
-                elif not re.match(r'[^@]+@[^@]+\.[^@]+', email):
-                    msg = 'Invalid email address!'
-                elif not re.match(r'[A-Za-z0-9]+', username):
-                    msg = 'Username must contain only characters and numbers!'
-                else:
-                    current_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                    with sqlite3.connect('registration.db') as conn:
-                        cursor = conn.cursor()
-                        cursor.execute('INSERT INTO users (username, password, email, registration_date) VALUES (?, ?, ?, ?)',
-                                       (username, hashed_password, email, current_time))
-                        conn.commit()
-                    msg = 'You have successfully registered!'
-                conn.close()    
-    except Exception as e:
-        msg = 'Error: {}'.format(str(e))
-    
-    return render_template('registration_file.html', msg=msg)
-
-@app.route('/logout')
-def logout():
-    # Clear the session data
-    session.clear()
-    return redirect(url_for('home'))
-
-@app.route('/', methods=['GET', 'POST'])
-def home():
-    def is_valid_url(url):
-        try:
-            result = urlparse(url)
-            return all([result.scheme, result.netloc])
-        except:
-            return False
-    
-    def search_recipes_by_ingredients(input_ingredients, category=None, area=None):
-        try:
             # Connect to the database
             connection = sqlite3.connect('mealsdb')
             cursor = connection.cursor()
@@ -178,26 +84,10 @@ def home():
             # Return the recipe details as a list of dictionaries
             return list(recipe_details.values())
     
-        except sqlite3.Error as e:
+    except sqlite3.Error as e:
         # Handle database-related errors
-            return f"Error accessing the database: {str(e)}"
+        return f"Error accessing the database: {str(e)}"
 
-        except Exception as e:
+    except Exception as e:
         # Handle other unexpected errors
-            return f"An unexpected error occurred: {str(e)}"
-
-    if request.method == 'POST':
-        ingredients = request.form.get('ingredients').split(',')
-        category = request.form.get('category')
-        area = request.form.get('area')
-        recipes = search_recipes_by_ingredients(ingredients, category, area)
-        return render_template('index.html', recipes=recipes)
-    return render_template('index.html', recipes=None)
-
-@app.route('/about')
-def about():
-    return render_template('about.html')
-
-
-if __name__ == "__main__":
-    app.run(host='127.0.0.1')
+        return f"An unexpected error occurred: {str(e)}"

@@ -1,0 +1,19 @@
+<!-- Store this code in 'about.html' file inside the 'templates' folder-->
+
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>About Us</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">                    
+    </head>
+    <body>
+        <div class="navigation">
+            <a href="{{ url_for('home') }}">Home</a>
+            <a href="{{ url_for('about') }}">About</a>
+            <a href="{{ url_for('login') }}">Login</a>
+        </div>
+        
+        <h1>About Us</h1>
+        <p>Welcome to our website! This is a platform for searching and exploring various recipes.</p>
+    </body>
+</html>
