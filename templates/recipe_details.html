@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Recipe Details</title>
+</head>
+<body>
+    <h2>Recipe Details</h2>
+
+    <h3>Name:</h3>
+    <p>{{ recipe[1] }}</p>
+
+    <h3>Category:</h3>
+    <p>{{ recipe[2] }}</p>
+
+    <h3>Area:</h3>
+    <p>{{ recipe[3] }}</p>
+
+    <h3>Instructions:</h3>
+    <p>{{ recipe[4] }}</p>
+
+    <h3>Youtube Link:</h3>
+    {% if recipe[7] %}
+        <a href="{{ recipe[7] }}" target="_blank">{{ recipe[7] }}</a>
+    {% else %}
+        Not available
+    {% endif %}
+
+    <h3>Tags:</h3>
+    <p>{{ recipe[8] }}</p>
+
+    <img src="{{ recipe[9] }}" alt="Meal Thumbnail">
+
+    <h3>Ingredients:</h3>
+    <ul>
+        {% for ingredient, measurement in ingredients %}
+            <li>{{ ingredient }}: {{ measurement }}</li>
+        {% endfor %}
+    </ul>
+
+    <h3>Average Rating:</h3>
+    <p>{{ average_rating }}</p>
+
+    <h3>Total Reviews:</h3>
+    <p>{{ num_reviews }}</p>
+
+    <h3>Reviews:</h3>
+    {% if reviews %}
+        <ul>
+            {% for review in reviews %}
+                <li>Rating: {{ review[4] }}</li>
+                <li>Feedback: {{ review[5] }}</li>
+                <li>Time: {{ review[6] }}</li>
+                <hr>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No reviews available.</p>
+    {% endif %}
+
+    <a href="{{ url_for('home') }}">Back to Search</a>
+
+
+    {% if session.loggedin %}
+        <a href="{{ url_for('review_form', meal_id=meal_id) }}">Add Review</a>
+    {% else %}
+        <p>Please <a href="{{ url_for('login') }}">login</a> to add a review.</p>
+    {% endif %}
+
+</body>
+</html>

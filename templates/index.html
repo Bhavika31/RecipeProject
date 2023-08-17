@@ -1,79 +1,59 @@
-<!-- Store this code in 'index.html' file inside the 'templates' folder-->
-
+<!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <title> Index </title>
-        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">                    
-    </head>
-    <body>
-        <div class="navigation">
-            <a href="{{ url_for('home') }}">Home</a>
-            <a href="{{ url_for('about') }}">About</a>
-            {% if session.loggedin %}
-                <a href="{{ url_for('logout') }}">Logout</a>
-            {% else %}
-                <a href="{{ url_for('login') }}">Login</a>
-            {% endif %}
-        </div>
-        
-        <h1>Recipe Search</h1>
-
-        <form method="POST" action="/">
-            <label>Enter Ingredients (comma-separated):</label><br>
-            <input type="text" name="ingredients"><br>
-            
-            <label for="category">Select Category:</label>
-            <select name="category" id="category">
-                <option value="">Any Category</option>
-                <option value="breakfast">Breakfast</option>
-                <option value="lunch">Lunch</option>
-                <!-- Add more options as needed -->
-            </select><br>
-
-            <label for="cuisine">Select Cuisine:</label>
-            <select name="cuisine" id="Area">
-                <option value="">Any Cuisine</option>
-                <option value="italian">Italian</option>
-                <option value="mexican">Mexican</option>
-                <!-- Add more options as needed -->
-            </select><br>
-            
-            <input type="submit" value="Search">
-        </form>
-        
-        {% if recipes %}
-            <h2>Search Results:</h2>
-            {% for recipe in recipes %}
-                <h3>{{ recipe['name'] }}</h3>
-                <p>Category: {{ recipe['category'] }}</p>
-                <p>Area: {{ recipe['area'] }}</p>
-                <p>Instructions: {{ recipe['instructions'] }}</p>
-                {% if recipe['youtube_link'] %}
-                    <p>Youtube Link: <a href="{{ recipe['youtube_link'] }}" target="_blank">Watch on YouTube</a></p>
-                {% else %}
-                    <p>Youtube Link: Not available</p>
-                {% endif %}
-                <p>Tags: {{ recipe['tags'] }}</p>
-                <img src="{{ recipe['meal_thumb'] }}" alt="Meal Thumbnail">
-
-                <h4>Ingredients Provided:</h4>
-                <ul>
-                    {% for ingredient, measurement in recipe['input_ingredients'] %}
-                        <li>{{ ingredient }}: {{ measurement }}</li>
-                    {% endfor %}
-                </ul>
-
-                <h4>Remaining Ingredients:</h4>
-                <ul>
-                    {% for ingredient, measurement in recipe['remaining_ingredients'] %}
-                        <li>{{ ingredient }}: {{ measurement }}</li>
-                    {% endfor %}
-                </ul>
-                <hr>
-            {% endfor %}
+<head>
+    <meta charset="UTF-8">
+    <title>Recipe Search</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="navigation">
+        <a href="{{ url_for('home') }}">Home</a>
+        <a href="{{ url_for('about') }}">About</a>
+        {% if session.loggedin %}
+            <a href="{{ url_for('logout') }}">Logout</a>
         {% else %}
-            <p>No recipes found with the provided ingredients and filters.</p>
+            <a href="{{ url_for('login') }}">Login</a>
         {% endif %}
-    </body>
+    </div>
+
+    <h1>Recipe Search</h1>
+
+    <form method="POST" action="/">
+        <label>Enter Ingredients (comma-separated):</label><br>
+        <input type="text" name="ingredients"><br>
+        
+        <label for="category">Select Category:</label>
+        <select name="category" id="category">
+            <option value="">Any Category</option>
+            <option value="breakfast">Breakfast</option>
+            <option value="lunch">Lunch</option>
+            <!-- Add more options as needed -->
+        </select><br>
+
+        <label for="cuisine">Select Cuisine:</label>
+        <select name="cuisine" id="Area">
+            <option value="">Any Cuisine</option>
+            <option value="italian">Italian</option>
+            <option value="mexican">Mexican</option>
+            <!-- Add more options as needed -->
+        </select><br>
+        
+        <input type="submit" value="Search">
+    </form>
+
+    {% if recipes %}
+        <h2>Search Results:</h2>
+        <div class="recipe-grid">
+            {% for recipe in recipes %}
+                <div class="recipe-card">
+                    <h3>{{ recipe['name'] }}</h3>
+                    <img src="{{ recipe['meal_thumb'] }}" alt="Meal Thumbnail">
+                    <a href="{{ url_for('recipe_details', meal_id=recipe['meal_id']) }}">View Recipe</a>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No recipes found with the provided ingredients and filters.</p>
+    {% endif %}
+</body>
 </html>
