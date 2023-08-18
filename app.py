@@ -5,20 +5,12 @@ import bcrypt
 from datetime import datetime
 from collections import defaultdict
 from urllib.parse import urlparse
-from flask_sqlalchemy import SQLAlchemy
+
+from get_meal import is_valid_url, search_recipes_by_ingredients
 
 app = Flask(__name__)
 app.secret_key = '1'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///mealsdb'
-db = SQLAlchemy(app)
 
-
-def is_valid_url(url):
-    try:
-        result = urlparse(url)
-        return all([result.scheme, result.netloc])
-    except:
-        return False
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -102,59 +94,6 @@ def logout():
 @app.route('/', methods=['GET', 'POST'])
 def home():
 
-    def search_recipes_by_ingredients(input_ingredients, category=None, area=None):
-        try:
-            # Connect to the database
-            connection = sqlite3.connect('mealsdb')
-            cursor = connection.cursor()
-
-            # Convert the input ingredients to lowercase
-            input_ingredients = [ingredient.strip().lower() for ingredient in input_ingredients]
-
-            # Construct the SQL query with optional category and area filters
-            query = """
-            SELECT m.meal_id, m.meal_name, m.meal_thumb
-            FROM meals m
-            JOIN meal_ingredients mi ON m.meal_id = mi.meal_id
-            JOIN ingredients i ON mi.ingredient_id = i.ingredient_id
-            WHERE LOWER(i.ingredient_name) IN ({})
-            {category_filter}
-            {area_filter}
-            ORDER BY m.meal_name
-            """.format(
-                ', '.join('?' for _ in input_ingredients),
-                category_filter=f"AND m.category = '{category}'" if category else "",
-                area_filter=f"AND m.area = '{area}'" if area else ""
-            )
-
-            # Execute the query with input ingredients and optional filters, and retrieve matching recipes
-            recipes = cursor.execute(query, input_ingredients).fetchall()
-
-            # Create a list to store the basic recipe details
-            recipe_details_list = []
-
-            # Loop through the recipes and organize the basic details
-            for recipe in recipes:
-                recipe_details_list.append({
-                    'meal_id': recipe[0],
-                    'name': recipe[1],
-                    'meal_thumb': recipe[2]
-                })
-
-
-            # Return the basic recipe details as a list of dictionaries
-            return recipe_details_list
-
-        except sqlite3.Error as e:
-            # Handle database-related errors
-            return f"Error accessing the database: {str(e)}"
-
-        except Exception as e:
-            # Handle other unexpected errors
-            return f"An unexpected error occurred: {str(e)}"
-        
-        finally:
-            connection.close()
 
 
     if request.method == 'POST':
@@ -182,8 +121,6 @@ def submit_review(meal_id):
         # Get user_id and username from the session
         user_id = session.get('id')
         username = session.get('username')
-        print(user_id)
-        print(username)
 
         # Create a UTC timestamp using datetime.utcnow()
         timestamp = datetime.utcnow()
@@ -197,7 +134,6 @@ def submit_review(meal_id):
             ''', (user_id, username, meal_id, rating, feedback, timestamp))
             conn.commit()
             
-
             return redirect(url_for('recipe_details', meal_id=meal_id))
         
     except sqlite3.Error as e:
@@ -207,7 +143,6 @@ def submit_review(meal_id):
     except Exception as e:
         error_msg = f"An unexpected error occurred: {str(e)}"
 
-        
     finally:
         conn.close()
     

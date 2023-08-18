@@ -1,70 +1,81 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Recipe Details</title>
+    <meta charset="UTF-8">
+    <title>Recipe Search</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h2>Recipe Details</h2>
+    <div class="navigation">
+        <a href="{{ url_for('home') }}">Home</a>
+        <a href="{{ url_for('about') }}">About</a>
+        {% if session.loggedin %}
+            <a href="{{ url_for('logout') }}">Logout</a>
+        {% else %}
+            <a href="{{ url_for('login') }}">Login</a>
+        {% endif %}
+    </div>
 
-    <h3>Name:</h3>
-    <p>{{ recipe[1] }}</p>
+    <div class="recipe-details">
+        <h2>Recipe Details</h2>
 
-    <h3>Category:</h3>
-    <p>{{ recipe[2] }}</p>
+        <h3>Name:</h3>
+        <p>{{ recipe[1] }}</p>
 
-    <h3>Area:</h3>
-    <p>{{ recipe[3] }}</p>
+        <h3>Category:</h3>
+        <p>{{ recipe[2] }}</p>
 
-    <h3>Instructions:</h3>
-    <p>{{ recipe[4] }}</p>
+        <h3>Area:</h3>
+        <p>{{ recipe[3] }}</p>
 
-    <h3>Youtube Link:</h3>
-    {% if recipe[7] %}
-        <a href="{{ recipe[7] }}" target="_blank">{{ recipe[7] }}</a>
-    {% else %}
-        Not available
-    {% endif %}
+        <h3>Instructions:</h3>
+        <p>{{ recipe[4] }}</p>
 
-    <h3>Tags:</h3>
-    <p>{{ recipe[8] }}</p>
+        <h3>Youtube Link:</h3>
+        {% if recipe[7] %}
+            <a href="{{ recipe[7] }}" target="_blank">{{ recipe[7] }}</a>
+        {% else %}
+            Not available
+        {% endif %}
 
-    <img src="{{ recipe[9] }}" alt="Meal Thumbnail">
+        <h3>Tags:</h3>
+        <p>{{ recipe[8] }}</p>
 
-    <h3>Ingredients:</h3>
-    <ul>
-        {% for ingredient, measurement in ingredients %}
-            <li>{{ ingredient }}: {{ measurement }}</li>
-        {% endfor %}
-    </ul>
+        <img src="{{ recipe[9] }}" alt="Meal Thumbnail">
 
-    <h3>Average Rating:</h3>
-    <p>{{ average_rating }}</p>
+        <div class="ingredients-grid">
+            <h3>Ingredients:</h3>
+            <ul>
+                {% for ingredient, measurement in ingredients %}
+                    <li>{{ ingredient }}: {{ measurement }}</li>
+                {% endfor %}
+            </ul>
+        </div>
 
-    <h3>Total Reviews:</h3>
-    <p>{{ num_reviews }}</p>
+        <div class="reviews-section">
+            <h3>Reviews:</h3>
+            {% if reviews %}
+                <ul>
+                    {% for review in reviews %}
+                        <li class="review-item">
+                            <p>Rating: {{ review[4] }}</p>
+                            <p>Feedback: {{ review[5] }}</p>
+                            <p>Time: {{ review[6] }}</p>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No reviews available.</p>
+            {% endif %}
+        </div>
 
-    <h3>Reviews:</h3>
-    {% if reviews %}
-        <ul>
-            {% for review in reviews %}
-                <li>Rating: {{ review[4] }}</li>
-                <li>Feedback: {{ review[5] }}</li>
-                <li>Time: {{ review[6] }}</li>
-                <hr>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>No reviews available.</p>
-    {% endif %}
+        <a href="{{ url_for('home') }}">Back to Search</a>
 
-    <a href="{{ url_for('home') }}">Back to Search</a>
-
-
-    {% if session.loggedin %}
-        <a href="{{ url_for('review_form', meal_id=meal_id) }}">Add Review</a>
-    {% else %}
-        <p>Please <a href="{{ url_for('login') }}">login</a> to add a review.</p>
-    {% endif %}
-
+        {% if session.loggedin %}
+            <a href="{{ url_for('review_form', meal_id=meal_id) }}">Add Review</a>
+        {% else %}
+            <p>Please <a href="{{ url_for('login') }}">login</a> to add a review.</p>
+        {% endif %}
+    </div>
 </body>
 </html>
