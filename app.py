@@ -94,13 +94,11 @@ def logout():
 @app.route('/', methods=['GET', 'POST'])
 def home():
 
-
-
     if request.method == 'POST':
         ingredients = request.form.get('ingredients').split(',')
         category = request.form.get('category')
-        area = request.form.get('area')
-        recipes = search_recipes_by_ingredients(ingredients, category, area)
+        cuisine = request.form.get('cuisine')
+        recipes = search_recipes_by_ingredients(ingredients, category, cuisine)
         return render_template('index.html', recipes=recipes)
 
     return render_template('index.html', recipes=None)

@@ -38,10 +38,7 @@
             Not available
         {% endif %}
 
-        <h3>Tags:</h3>
-        <p>{{ recipe[8] }}</p>
-
-        <img src="{{ recipe[9] }}" alt="Meal Thumbnail">
+        <img src="{{ recipe[5] }}" alt="Meal Thumbnail">
 
         <div class="ingredients-grid">
             <h3>Ingredients:</h3>
@@ -54,12 +51,20 @@
 
         <div class="reviews-section">
             <h3>Reviews:</h3>
+
+            <div class="reviews-section">
+                <h3>Reviews:</h3>
+                <p>Average Rating: {{ average_rating }}</p>
+                <p>Total Reviews: {{ num_reviews }}</p>
+        
+        
             {% if reviews %}
                 <ul>
                     {% for review in reviews %}
                         <li class="review-item">
                             <p>Rating: {{ review[4] }}</p>
                             <p>Feedback: {{ review[5] }}</p>
+                            <p>Username: {{ review[2] }}</p>
                             <p>Time: {{ review[6] }}</p>
                         </li>
                     {% endfor %}
