@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Recipe Search</title>
+    <title>Recipe Details</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
@@ -51,18 +51,18 @@
 
         <div class="reviews-section">
             <h3>Reviews:</h3>
-
-            <div class="reviews-section">
-                <h3>Reviews:</h3>
-                <p>Average Rating: {{ average_rating }}</p>
-                <p>Total Reviews: {{ num_reviews }}</p>
-        
+            <p>Average Rating: {{ average_rating|float|round(1) }}</p>
+            <p>Total Reviews: {{ num_reviews }}</p>
         
             {% if reviews %}
                 <ul>
                     {% for review in reviews %}
                         <li class="review-item">
-                            <p>Rating: {{ review[4] }}</p>
+                            <p>Rating: 
+                                {% for i in range(5) %}
+                                    <span class="star {% if i < review[4] %}filled{% else %}empty{% endif %}">&#9733;</span>
+                                {% endfor %}
+                            </p>
                             <p>Feedback: {{ review[5] }}</p>
                             <p>Username: {{ review[2] }}</p>
                             <p>Time: {{ review[6] }}</p>
@@ -74,13 +74,12 @@
             {% endif %}
         </div>
 
-        <a href="{{ url_for('home') }}">Back to Search</a>
+    <a href="{{ url_for('home') }}">Back to Search</a>
 
-        {% if session.loggedin %}
-            <a href="{{ url_for('review_form', meal_id=meal_id) }}">Add Review</a>
-        {% else %}
-            <p>Please <a href="{{ url_for('login') }}">login</a> to add a review.</p>
-        {% endif %}
-    </div>
+    {% if session.loggedin %}
+        <a href="{{ url_for('review_form', meal_id=meal_id) }}">Add Review</a>
+    {% else %}
+        <p>Please <a href="{{ url_for('login') }}">login</a> to add a review.</p>
+    {% endif %}
 </body>
 </html>

@@ -1,17 +1,74 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Submit Review</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h2>Submit a review</h2>
-    <p>Debug: Meal ID: {{ meal_id }}</p>
-    <form action="{{ url_for('submit_review', meal_id=meal_id) }}" method="post">
-        <label for="rating">Rating (1-5):</label>
-        <input type="number" name="rating" min="1" max="5" required><br><br>
-        <label for="feedback">Feedback:</label>
-        <textarea name="feedback" rows="4" cols="50" required></textarea><br><br>
-        <button type="submit">Submit Review</button>
-    </form>
+    <body>
+        <div class="navigation">
+            <a href="{{ url_for('home') }}">Home</a>
+            <a href="{{ url_for('about') }}">About</a>
+            {% if session.loggedin %}
+                <a href="{{ url_for('logout') }}">Logout</a>
+            {% else %}
+                <a href="{{ url_for('login') }}">Login</a>
+            {% endif %}
+        </div>
+
+    <div class="review-form-container">
+        <h2>Submit a Review</h2>
+        {% for message in flash_messages %}
+            <div class="flash-message">{{ message }}</div>
+        {% endfor %}
+        <form id="review-form" action="{{ url_for('submit_review', meal_id=meal_id) }}" method="post">
+            <div class="star-widget">
+                <input type="radio" name="rating" id="rate-5" value="5">
+                <label for="rate-5" class="star"></label>
+                <input type="radio" name="rating" id="rate-4" value="4">
+                <label for="rate-4" class="star"></label>
+                <input type="radio" name="rating" id="rate-3" value="3">
+                <label for="rate-3" class="star"></label>
+                <input type="radio" name="rating" id="rate-2" value="2">
+                <label for="rate-2" class="star"></label>
+                <input type="radio" name="rating" id="rate-1" value="1">
+                <label for="rate-1" class="star"></label>
+            </div>
+            
+            
+            <div class="textarea">
+                <textarea name="feedback" rows="4" cols="50" placeholder=" Describe your experience..." required></textarea>
+            </div>
+            <div class="btn">
+                <button type="submit">Post Review</button>
+            </div>
+        </form>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $("#review-form").submit(function(event) {
+            event.preventDefault();
+
+            const formData = $(this).serialize();
+            const mealId = '{{ meal_id }}';
+
+            $.ajax({
+                type: "POST",
+                url: `/submit_review/${mealId}`,
+                data: formData,
+                success: function(response) {
+                    const reviewMessage = document.getElementById('review-message');
+                    reviewMessage.innerHTML = 'Review was posted successfully!';
+                    reviewMessage.style.color = 'green';
+                },
+                error: function(xhr, status, error) {
+                    console.error(error);
+                }
+            });
+        });
+    </script>
 </body>
 </html>

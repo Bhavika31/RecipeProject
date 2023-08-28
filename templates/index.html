@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Recipe Search</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='index_style.css') }}">
+    <link href="https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="navigation">
@@ -16,38 +17,38 @@
         {% endif %}
     </div>
 
-    <h1>Recipe Search</h1>
-
-    <form method="POST" action="/">
-        <label>Enter Ingredients (comma-separated):</label><br>
-        <input type="text" name="ingredients"><br>
-        
-        <label for="category">Select Category:</label>
-        <select name="category" id="category">
-            <option value="">Any Category</option>
-            <option value="Seafood">Seafood</option>
-            <option value="Vegan">Vegan</option>
-            <option value="Vegetarian">Vegetarian</option>
-            <option value="Dessert">Dessert</option>
+    <div class="form-container"> 
+        <form method="POST" action="/">
+            <div class="form-group">
+                <label for="ingredients">Enter Ingredients (comma-separated):</label><br>
+                <input type="text" name="ingredients" id="ingredients"><br>
+            </div>
             
-        </select><br>
+            <div class="form-group">
+                <label for="category">Select Category:</label>
+                <select name="category" id="category">
+                    <option value="">Any Category</option>
+                    <option value="Seafood">Seafood</option>
+                    <option value="Vegan">Vegan</option>
+                    <!-- Add more category options here -->
+                </select><br>
+            </div>
 
-        <label for="Cuisine">Select Cuisine:</label>
-        <select name="cuisine" id="Area">
-            <option value="">Any Cuisine</option>
-            <option value="Italian">Italian</option>
-            <option value="Mexican">Mexican</option>
-            <option value="Indian">Indian</option>
-            <option value="Chinese">Chinese</option>
-            <option value="British">British</option>
-            <option value="Moroccan">Moroccan</option>
-            <option value="Thai">Thai</option>
-
+            <div class="form-group">
+                <label for="cuisine">Select Cuisine:</label>
+                <select name="cuisine" id="cuisine">
+                    <option value="">Any Cuisine</option>
+                    <option value="Italian">Italian</option>
+                    <option value="Mexican">Mexican</option>
+                    <!-- Add more cuisine options here -->
+                </select><br>
+            </div>
             
-        </select><br>
-        
-        <input type="submit" value="Search">
-    </form>
+            <div class="form-group">
+                <input type="submit" value="Search">
+            </div>
+        </form>
+    </div>
 
     {% if recipes %}
         <h2>Search Results:</h2>
@@ -60,7 +61,7 @@
                 </div>
             {% endfor %}
         </div>
-        {% else %}
+    {% else %}
         {% if request.method == 'POST' %}
             <p>No recipes found with the provided ingredients and filters.</p>
         {% endif %}

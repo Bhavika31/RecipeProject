@@ -4,7 +4,17 @@
         <title> Login </title>
         <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">          
     </head>
-    <body></br></br></br></br></br>
+    <body>
+      <div class="navigation">
+        <a href="{{ url_for('home') }}">Home</a>
+        <a href="{{ url_for('about') }}">About</a>
+        {% if session.loggedin %}
+            <a href="{{ url_for('logout') }}">Logout</a>
+        {% else %}
+            <a href="{{ url_for('login') }}">Login</a>
+        {% endif %}
+    </div>
+      <div class="container">
         <div align="center">
           <div align="center" class="border">
              <div class="header">
@@ -21,5 +31,6 @@
             <p class="bottom">Don't have an account?  <a class="bottom" href="{{url_for('register')}}"> Sign Up here</a></p>
           </div>
         </div>
+      </div>
     </body>
 </html>

@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect,flash, session, url_for
+from flask import Flask, render_template, request, redirect,flash, session, url_for, flash
 import sqlite3
 import re
 import bcrypt
@@ -68,23 +68,26 @@ def register():
                 elif not re.match(r'[A-Za-z0-9]+', username):
                     msg = 'Username must contain only characters and numbers!'
                 else:
-                    current_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                    current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                     with sqlite3.connect('mealsdb') as conn:
                         cursor = conn.cursor()
                         cursor.execute('INSERT INTO users (username, password, email, registration_date) VALUES (?, ?, ?, ?)',
                                        (username, hashed_password, email, current_time))
                         conn.commit()
                     
-                    msg = 'You have successfully registered!'
-                 
+                msg = 'You have successfully registered!'
+    except sqlite3.Error as e:
+        msg = 'SQLite error: {}'.format(str(e))
     except Exception as e:
-        msg = 'Error: {}'.format(str(e))
-    
+        msg = 'An unexpected error occurred: {}'.format(str(e))
     finally:
-        conn.close()
-    
-    return render_template('registration_file.html', msg=msg)
+        try:
+            conn.close()
+        except NameError:
+            pass  
 
+    return render_template('registration_file.html', msg=msg)
+                
 @app.route('/logout')
 def logout():
     # clears the session data
@@ -131,6 +134,9 @@ def submit_review(meal_id):
                 VALUES (?, ?, ?, ?, ?, ?)
             ''', (user_id, username, meal_id, rating, feedback, timestamp))
             conn.commit()
+
+            flash('Thank you for your review!', 'success')  # Flash a success message
+
             
             return redirect(url_for('recipe_details', meal_id=meal_id))
         
@@ -152,6 +158,8 @@ def review_form(meal_id):
     if 'loggedin' not in session or not session['loggedin']:
         flash('Please log in to add a review.', 'error')
         return redirect(url_for('recipe_details', meal_id=meal_id))
+    
+    flash_messages = session.pop('_flashes', [])
 
     return render_template('review_form.html', meal_id=meal_id)
 
@@ -171,6 +179,7 @@ def recipe_details(meal_id):
             # Calculate average rating
             total_rating = sum(review[4] for review in reviews)
             average_rating = total_rating / len(reviews) if len(reviews) > 0 else 0
+            rounded_average_rating = round(average_rating, 1) 
 
             # Fetch all ingredients for the recipe
             cursor.execute('''
@@ -181,13 +190,12 @@ def recipe_details(meal_id):
             ''', (meal_id,))
             ingredients = cursor.fetchall()
 
-        
         return render_template(
             'recipe_details.html',
             recipe=recipe,
             reviews=reviews,
             ingredients=ingredients,
-            average_rating=average_rating,
+            average_rating=rounded_average_rating,
             num_reviews=len(reviews),
             meal_id=meal_id
         )
